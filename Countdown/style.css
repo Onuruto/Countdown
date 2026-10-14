@@ -1,0 +1,143 @@
+:root{
+  --void:#000000;
+  --ember:#1a0303;
+  --blood:#e01b1b;
+  --blood-dim:#7a1010;
+  --ash:#6b5252;
+  --font-num:"Anton","Arial Narrow",Impact,sans-serif;
+  --font-label:"Barlow Condensed","Helvetica Neue",Arial,sans-serif;
+  color-scheme:dark;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+ 
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+ 
+html,body{height:100%}
+ 
+body{
+  margin:0;
+  background:var(--void);
+  background-image:radial-gradient(ellipse 80% 60% at 50% 50%, var(--ember) 0%, #000 70%);
+  color:var(--blood);
+  font-family:var(--font-label);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:24px;
+  overflow:hidden;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:24px;
+  animation:breathe 6s ease-in-out infinite;
+}
+ 
+@keyframes breathe{
+  0%,100%{background-size:100% 100%}
+  50%{background-size:130% 130%}
+}
+ 
+/* Scanlines + Vignette */
+.scan{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:2;
+  background:
+    repeating-linear-gradient(0deg, rgba(0,0,0,.45) 0px, rgba(0,0,0,.45) 1px, transparent 1px, transparent 3px),
+    radial-gradient(ellipse 70% 70% at 50% 50%, transparent 40%, rgba(0,0,0,.85) 100%);
+}
+ 
+.counter{
+  position:relative;
+  z-index:1;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  gap:clamp(4px,1.5vw,16px);
+  max-width:100%;
+}
+ 
+.group{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  min-width:0;
+}
+ 
+.n{
+  font-family:var(--font-num);
+  font-weight:400;
+  font-variant-numeric:tabular-nums;
+  font-size:clamp(3.2rem,15vw,9rem);
+  line-height:.85;
+  letter-spacing:.02em;
+  color:#ff3b30;
+  text-shadow:
+    0 0 .04em #ff6b60,
+    0 0 .22em var(--blood),
+    0 0 .7em rgba(224,27,27,.75),
+    0 0 1.6em rgba(224,27,27,.35);
+}
+ 
+.l{
+  font-family:var(--font-label);
+  font-size:clamp(.6rem,1.8vw,.85rem);
+  letter-spacing:.42em;
+  text-transform:uppercase;
+  color:var(--ash);
+  padding-left:.42em;
+}
+ 
+.sep{
+  font-family:var(--font-num);
+  font-size:clamp(2.4rem,11vw,6.5rem);
+  line-height:.95;
+  color:var(--blood-dim);
+  animation:flicker 2s steps(1) infinite;
+}
+ 
+@keyframes flicker{
+  0%,45%{opacity:1}
+  50%,95%{opacity:.25}
+  100%{opacity:1}
+}
+ 
+/* Letzte Stunde: der Puls wird schneller und härter */
+body.final .n{
+  animation:throb 1s ease-out infinite;
+}
+body.final{
+  animation:breathe 2.4s ease-in-out infinite;
+}
+@keyframes throb{
+  0%{transform:scale(1.03);filter:brightness(1.35)}
+  30%{transform:scale(1);filter:brightness(1)}
+  100%{transform:scale(1);filter:brightness(1)}
+}
+ 
+/* Abgelaufen */
+.over{
+  position:relative;
+  z-index:1;
+  margin:0;
+  font-family:var(--font-num);
+  font-size:clamp(1.4rem,6vw,3rem);
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:#ff3b30;
+  text-shadow:0 0 .3em var(--blood),0 0 1em rgba(224,27,27,.6);
+  animation:pulse 1.6s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%,100%{opacity:1}
+  50%{opacity:.35}
+}
+body.over .counter{display:none}
+ 
+@media (prefers-reduced-motion: reduce){
+  *{animation:none!important;transform:none!important}
+}
