@@ -1,0 +1,200 @@
+/* Layout: ein Zähler im schwarzen Vollbild — jede Sekunde ein Treffer, am Ende der K.O. */
+:root{
+  --void:#000000;
+  --ember:#1a0303;
+  --blood:#e01b1b;
+  --blood-dim:#7a1010;
+  --ash:#6b5252;
+  --font-num:"Anton","Arial Narrow",Impact,sans-serif;
+  --font-label:"Barlow Condensed","Helvetica Neue",Arial,sans-serif;
+  color-scheme:dark;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+
+html,body{height:100%}
+
+body{
+  margin:0;
+  background:var(--void);
+  background-image:radial-gradient(ellipse 80% 60% at 50% 50%, var(--ember) 0%, #000 70%);
+  color:var(--blood);
+  font-family:var(--font-label);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:24px;
+  animation:breathe 6s ease-in-out infinite;
+}
+
+@keyframes breathe{
+  0%,100%{background-size:100% 100%}
+  50%{background-size:130% 130%}
+}
+
+/* ---------- Treffer-Ebenen ---------- */
+
+/* Weiß-roter Aufschlag im Moment des Treffers */
+.flash{
+  position:fixed;inset:0;pointer-events:none;z-index:3;
+  background:radial-gradient(ellipse 60% 50% at 50% 50%, rgba(255,90,70,.5) 0%, rgba(224,27,27,.18) 45%, transparent 75%);
+  opacity:0;
+}
+body.hit .flash{animation:flash .22s ease-out}
+@keyframes flash{
+  0%{opacity:1}
+  100%{opacity:0}
+}
+
+/* Druckwelle, die nach außen läuft */
+.shock{
+  position:fixed;top:50%;left:50%;z-index:2;pointer-events:none;
+  width:min(46vmin,340px);aspect-ratio:1;max-width:100%;
+  margin:0;transform:translate(-50%,-50%) scale(.35);
+  border:3px solid rgba(255,70,55,.85);
+  border-radius:50%;
+  opacity:0;
+}
+body.hit .shock{animation:shock .42s cubic-bezier(.15,.7,.35,1)}
+@keyframes shock{
+  0%{opacity:.9;transform:translate(-50%,-50%) scale(.3);border-width:6px}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(2.1);border-width:1px}
+}
+
+/* Scanlines + Vignette */
+.scan{
+  position:fixed;inset:0;pointer-events:none;z-index:4;
+  background:
+    repeating-linear-gradient(0deg, rgba(0,0,0,.45) 0px, rgba(0,0,0,.45) 1px, transparent 1px, transparent 3px),
+    radial-gradient(ellipse 70% 70% at 50% 50%, transparent 40%, rgba(0,0,0,.85) 100%);
+}
+
+/* Der Schüttler trägt den Rückstoß des Treffers */
+.shaker{
+  position:relative;z-index:1;
+  display:flex;align-items:center;justify-content:center;
+  max-width:100%;
+}
+body.hit .shaker{animation:shake .19s cubic-bezier(.36,.07,.19,.97)}
+body.final.hit .shaker{animation:shake-hard .26s cubic-bezier(.36,.07,.19,.97)}
+
+@keyframes shake{
+  0%{transform:translate(0,0) rotate(0deg)}
+  18%{transform:translate(-7px,3px) rotate(-.5deg)}
+  38%{transform:translate(6px,-3px) rotate(.4deg)}
+  60%{transform:translate(-4px,2px) rotate(-.25deg)}
+  80%{transform:translate(2px,-1px) rotate(.1deg)}
+  100%{transform:translate(0,0) rotate(0deg)}
+}
+@keyframes shake-hard{
+  0%{transform:translate(0,0) rotate(0deg) scale(1)}
+  12%{transform:translate(-16px,7px) rotate(-1.4deg) scale(1.03)}
+  28%{transform:translate(14px,-8px) rotate(1.2deg) scale(1.02)}
+  46%{transform:translate(-11px,5px) rotate(-.9deg) scale(1.01)}
+  64%{transform:translate(8px,-4px) rotate(.6deg)}
+  82%{transform:translate(-4px,2px) rotate(-.3deg)}
+  100%{transform:translate(0,0) rotate(0deg) scale(1)}
+}
+
+/* ---------- Zähler ---------- */
+
+.counter{
+  display:flex;align-items:flex-start;justify-content:center;
+  gap:clamp(4px,1.5vw,16px);
+  max-width:100%;
+}
+
+.group{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+
+.n{
+  font-family:var(--font-num);
+  font-weight:400;
+  font-variant-numeric:tabular-nums;
+  font-size:clamp(3.2rem,15vw,9rem);
+  line-height:.85;
+  letter-spacing:.02em;
+  color:#ff3b30;
+  text-shadow:
+    0 0 .04em #ff6b60,
+    0 0 .22em var(--blood),
+    0 0 .7em rgba(224,27,27,.75),
+    0 0 1.6em rgba(224,27,27,.35);
+}
+
+/* Die Sekundenziffer nimmt den Schlag direkt entgegen */
+body.hit .sec .n{animation:punch .22s cubic-bezier(.2,.9,.3,1)}
+body.final.hit .sec .n{animation:punch-hard .3s cubic-bezier(.2,.9,.3,1)}
+@keyframes punch{
+  0%{transform:scale(1.22);filter:brightness(1.8)}
+  100%{transform:scale(1);filter:brightness(1)}
+}
+@keyframes punch-hard{
+  0%{transform:scale(1.45) rotate(-2deg);filter:brightness(2.4)}
+  55%{transform:scale(.97) rotate(.8deg);filter:brightness(1.2)}
+  100%{transform:scale(1) rotate(0deg);filter:brightness(1)}
+}
+
+.l{
+  font-size:clamp(.6rem,1.8vw,.85rem);
+  letter-spacing:.42em;
+  text-transform:uppercase;
+  color:var(--ash);
+  padding-left:.42em;
+}
+
+.sep{
+  font-family:var(--font-num);
+  font-size:clamp(2.4rem,11vw,6.5rem);
+  line-height:.95;
+  color:var(--blood-dim);
+  animation:flicker 2s steps(1) infinite;
+}
+@keyframes flicker{
+  0%,45%{opacity:1}
+  50%,95%{opacity:.25}
+  100%{opacity:1}
+}
+
+/* Letzte Stunde: der Atem geht schneller */
+body.final{animation:breathe 2.4s ease-in-out infinite}
+
+/* ---------- K.O. ---------- */
+
+.ko{
+  margin:0;
+  font-family:var(--font-num);
+  font-size:clamp(4.5rem,26vw,16rem);
+  line-height:.8;
+  letter-spacing:.04em;
+  color:#ff3b30;
+  text-shadow:
+    0 0 .05em #fff,
+    0 0 .2em #ff6b60,
+    0 0 .6em var(--blood),
+    0 0 1.6em rgba(224,27,27,.55);
+  animation:ko-slam .7s cubic-bezier(.2,1.2,.3,1) both, ko-rest 2.6s ease-in-out 1.1s infinite;
+}
+@keyframes ko-slam{
+  0%{opacity:0;transform:scale(5) rotate(-14deg);filter:blur(14px) brightness(3)}
+  55%{opacity:1;transform:scale(.88) rotate(2deg);filter:blur(0) brightness(2)}
+  72%{transform:scale(1.06) rotate(-1deg)}
+  100%{opacity:1;transform:scale(1) rotate(0deg);filter:blur(0) brightness(1)}
+}
+@keyframes ko-rest{
+  0%,100%{opacity:1}
+  50%{opacity:.62}
+}
+body.over .counter{display:none}
+body.over{animation:none;background-image:radial-gradient(ellipse 90% 70% at 50% 50%, #2a0404 0%, #000 72%)}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation:none!important;transform:none!important}
+  .ko{opacity:1}
+  .flash,.shock{display:none}
+}

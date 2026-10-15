@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Donnerstag 15:00</title>
+<meta name="description" content="Countdown auf Donnerstag, 15. Oktober 2026, 15:00 Uhr.">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="flash" aria-hidden="true"></div>
+<div class="shock" aria-hidden="true"></div>
+<div class="scan" aria-hidden="true"></div>
+
+<div class="shaker">
+  <main class="counter" role="timer" aria-live="off">
+    <div class="group"><span class="n" id="d">00</span><span class="l">Tage</span></div>
+    <span class="sep" aria-hidden="true">:</span>
+    <div class="group"><span class="n" id="h">00</span><span class="l">Std</span></div>
+    <span class="sep" aria-hidden="true">:</span>
+    <div class="group"><span class="n" id="m">00</span><span class="l">Min</span></div>
+    <span class="sep" aria-hidden="true">:</span>
+    <div class="group sec"><span class="n" id="s">00</span><span class="l">Sek</span></div>
+  </main>
+
+  <p class="ko" id="ko" hidden>K.O.</p>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
